@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cổng Thi Trực Tuyến</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,0.2) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,0.2) 0, transparent 50%);
+        }
+
+        .sidebar {
+            width: 380px;
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            z-index: 10;
+            box-shadow: 4px 0 24px rgba(0,0,0,0.2);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #ffffff; /* Contrast for the exam iframe */
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+
+        .control-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: rgba(15, 23, 42, 0.6);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        select:focus, input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        .timer-box {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .timer-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+        }
+
+        .timer-display {
+            font-size: 3.5rem;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            color: var(--text-main);
+            letter-spacing: 2px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .timer-display.warning {
+            color: var(--danger);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(0.98); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 0.875rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.39);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+        }
+        
+        .btn-primary:disabled {
+            background: #334155;
+            color: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+            margin-top: 1rem;
+            box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.39);
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .history-section {
+            margin-top: auto;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+        }
+
+        .history-list {
+            list-style: none;
+            margin-top: 1rem;
+            max-height: 250px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .history-item {
+            background: rgba(255,255,255,0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            font-size: 0.85rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            border: 1px solid transparent;
+            transition: border-color 0.3s;
+        }
+
+        .history-item:hover {
+            border-color: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.08);
+        }
+
+        .history-item a {
+            color: #818cf8;
+            text-decoration: none;
+            word-break: break-all;
+            font-weight: 500;
+        }
+
+        .history-item a:hover {
+            text-decoration: underline;
+        }
+        
+        .history-meta {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 2.5rem;
+            border-radius: 16px;
+            width: 400px;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .modal h2 { margin-bottom: 1rem; color: var(--danger); font-size: 1.8rem;}
+        .modal p { color: var(--text-main); margin-bottom: 2rem; line-height: 1.5;}
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h1>Cổng Thi Trực Tuyến</h1>
+        
+        <div class="control-group">
+            <label for="examSelect">Chọn Đề Thi</label>
+            <select id="examSelect">
+                <option value="1/index.html">Đề 1 - Quản lý Khách sạn</option>
+                <option value="2/index.html">Đề 2 - Quản lý Thư viện</option>
+                <option value="3/index.html">Đề 3 - Bán hàng trực tuyến</option>
+                <option value="4/index.html">Đề 4 - Quản lý Nhân sự</option>
+                <option value="5/index.html">Đề 5 - Đặt vé xem phim</option>
+            </select>
+        </div>
+
+        <div class="timer-box">
+            <div class="timer-display" id="timer">45:00</div>
+            <button class="btn btn-primary" id="startBtn" style="margin-top: 1.5rem;">Bắt Đầu Làm Bài</button>
+        </div>
+
+        <div class="control-group" id="submitGroup" style="opacity: 0.4; pointer-events: none; transition: all 0.3s;">
+            <label>Nộp bài (Link Github)</label>
+            <input type="url" id="githubLink" placeholder="https://github.com/username/repo" required>
+            <button class="btn btn-success" id="submitBtn">Gửi Bài Làm</button>
+        </div>
+
+        <div class="history-section">
+            <label>Lịch Sử Nộp Bài</label>
+            <ul class="history-list" id="historyList">
+                <!-- History items will appear here -->
+            </ul>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <iframe id="examFrame" src="1/index.html" title="Nội dung đề thi"></iframe>
+    </div>
+
+    <div class="overlay" id="timeUpModal">
+        <div class="modal">
+            <h2>Hết Giờ!</h2>
+            <p>Thời gian làm bài 45 phút của bạn đã kết thúc. Vui lòng nộp link Github bài làm của bạn ngay.</p>
+            <button class="btn btn-primary" onclick="document.getElementById('timeUpModal').classList.remove('active')">Đã Hiểu</button>
+        </div>
+    </div>
+
+    <script>
+        const EXAM_TIME = 45 * 60; // 45 minutes in seconds
+        let timeLeft = EXAM_TIME;
+        let timerInterval = null;
+        let isStarted = false;
+
+        const timerEl = document.getElementById('timer');
+        const startBtn = document.getElementById('startBtn');
+        const examSelect = document.getElementById('examSelect');
+        const examFrame = document.getElementById('examFrame');
+        const submitGroup = document.getElementById('submitGroup');
+        const githubLinkInput = document.getElementById('githubLink');
+        const submitBtn = document.getElementById('submitBtn');
+        const historyList = document.getElementById('historyList');
+        const timeUpModal = document.getElementById('timeUpModal');
+
+        let fallbackHistory = [];
+        let fallbackState = null;
+
+        function safeSetItem(key, value) {
+            try { localStorage.setItem(key, value); } 
+            catch (e) { 
+                if (key === 'examSubmissions') fallbackHistory = JSON.parse(value);
+                if (key === 'examState') fallbackState = JSON.parse(value);
+            }
+        }
+
+        function safeGetItem(key, defaultValue) {
+            try { return localStorage.getItem(key) || defaultValue; } 
+            catch (e) { 
+                if (key === 'examSubmissions') return JSON.stringify(fallbackHistory);
+                if (key === 'examState') return JSON.stringify(fallbackState || null);
+                return defaultValue; 
+            }
+        }
+
+        function safeRemoveItem(key) {
+            try { localStorage.removeItem(key); }
+            catch (e) {
+                if (key === 'examState') fallbackState = null;
+            }
+        }
+
+        function loadHistory() {
+            const history = JSON.parse(safeGetItem('examSubmissions', '[]'));
+            historyList.innerHTML = '';
+            if (history.length === 0) {
+                historyList.innerHTML = '<li style="color: var(--text-muted); font-size: 0.85rem; text-align: center; margin-top: 1rem;">Chưa có bài nộp nào</li>';
+                return;
+            }
+            history.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'history-item';
+                li.innerHTML = `
+                    <a href="${item.link}" target="_blank">${item.link}</a>
+                    <div class="history-meta">
+                        <span>${item.examName}</span>
+                        <span>${new Date(item.timestamp).toLocaleTimeString('vi-VN')} - ${new Date(item.timestamp).toLocaleDateString('vi-VN')}</span>
+                    </div>
+                `;
+                historyList.appendChild(li);
+            });
+        }
+
+        function updateDisplay() {
+            const displayTime = Math.max(0, timeLeft);
+            const m = Math.floor(displayTime / 60).toString().padStart(2, '0');
+            const s = Math.floor(displayTime % 60).toString().padStart(2, '0');
+            timerEl.textContent = `${m}:${s}`;
+            
+            if (displayTime > 0 && displayTime <= 300) {
+                timerEl.classList.add('warning');
+            } else {
+                timerEl.classList.remove('warning');
+            }
+        }
+
+        function handleTimeUp() {
+            clearInterval(timerInterval);
+            timeUpModal.classList.add('active');
+            timeLeft = 0;
+            updateDisplay();
+            safeRemoveItem('examState');
+        }
+
+        function resumeTimer(endTime) {
+            if (isStarted) return;
+            isStarted = true;
+            
+            submitGroup.style.opacity = '1';
+            submitGroup.style.pointerEvents = 'all';
+            
+            examSelect.disabled = true;
+            startBtn.textContent = 'Đang Tính Giờ...';
+            startBtn.disabled = true;
+
+            function tick() {
+                timeLeft = Math.ceil((endTime - Date.now()) / 1000);
+                if (timeLeft <= 0) {
+                    handleTimeUp();
+                } else {
+                    updateDisplay();
+                }
+            }
+            
+            tick(); // Cập nhật ngay
+            if (timeLeft > 0) {
+                timerInterval = setInterval(tick, 1000);
+            }
+        }
+
+        function startNewTimer() {
+            if (isStarted) return;
+            
+            examFrame.src = examSelect.value;
+            const endTime = Date.now() + EXAM_TIME * 1000;
+            
+            safeSetItem('examState', JSON.stringify({
+                endTime: endTime,
+                selectedExam: examSelect.value
+            }));
+            
+            resumeTimer(endTime);
+        }
+
+        submitBtn.addEventListener('click', () => {
+            const link = githubLinkInput.value.trim();
+            if (!link) {
+                alert('Vui lòng nhập link Github!');
+                return;
+            }
+
+            const examName = examSelect.options[examSelect.selectedIndex].text;
+            const history = JSON.parse(safeGetItem('examSubmissions', '[]'));
+            
+            history.unshift({
+                link: link,
+                examName: examName,
+                timestamp: new Date().getTime()
+            });
+
+            safeSetItem('examSubmissions', JSON.stringify(history));
+            
+            githubLinkInput.value = '';
+            loadHistory();
+            safeRemoveItem('examState'); // Xóa state khi đã nộp bài
+            
+            submitBtn.textContent = 'Đã Nộp! Đang tải lại...';
+            submitBtn.style.background = '#059669';
+            clearInterval(timerInterval);
+            isStarted = false;
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        });
+
+        startBtn.addEventListener('click', startNewTimer);
+        
+        examSelect.addEventListener('change', () => {
+            if (!isStarted) {
+                examFrame.src = examSelect.value;
+            }
+        });
+
+        function restoreState() {
+            loadHistory();
+            const stateJson = safeGetItem('examState', null);
+            if (stateJson && stateJson !== "null") {
+                const state = JSON.parse(stateJson);
+                examSelect.value = state.selectedExam;
+                examFrame.src = state.selectedExam;
+                const remaining = Math.ceil((state.endTime - Date.now()) / 1000);
+                
+                if (remaining > 0) {
+                    resumeTimer(state.endTime);
+                } else {
+                    timeLeft = 0;
+                    resumeTimer(state.endTime); 
+                }
+            } else {
+                updateDisplay();
+                // Tự động chọn ngẫu nhiên một đề thi
+                const randomIndex = Math.floor(Math.random() * examSelect.options.length);
+                examSelect.selectedIndex = randomIndex;
+                // Khóa lựa chọn để thí sinh không tự đổi đề
+                examSelect.disabled = true; 
+                examFrame.src = examSelect.value;
+            }
+        }
+
+        // Init
+        restoreState();
+    </script>
+</body>
+</html>
